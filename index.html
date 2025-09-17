@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Navatej Ratnan | Developer Portfolio</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body {
+            font-family: 'VT323', monospace;
+            background-color: #101010;
+            color: #d9f99d; /* lime-200 */
+            overflow-x: hidden;
+        }
+        header {
+            background: rgba(10, 10, 10, 0.75);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-bottom: 2px solid #a3e635;
+        }
+        #matrix-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+        .pixel-box {
+            background: rgba(10, 10, 10, 0.85);
+            border: 2px solid #a3e635; /* lime-400 */
+            box-shadow: 0 0 10px #a3e635, inset 0 0 10px #a3e635;
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+        }
+        .btn {
+            border: 2px solid #a3e635;
+            transition: all 0.3s ease;
+            box-shadow: 0 0 5px #a3e635;
+        }
+        .btn:hover {
+            background: #a3e635;
+            color: #101010;
+            box-shadow: 0 0 15px #a3e635;
+        }
+        .skill-filter-btn.active {
+             background: #a3e635;
+             color: #101010;
+        }
+        .scroll-reveal {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .scroll-reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .project-card {
+            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out, height 0.4s ease-in-out;
+        }
+        .project-card.hidden {
+            opacity: 0;
+            transform: scale(0.95);
+            width: 0;
+            height: 0;
+            padding: 0;
+            margin: 0;
+            overflow: hidden;
+        }
+        /* Custom Scrollbar for Project List */
+        .projects-list::-webkit-scrollbar {
+            width: 12px;
+        }
+        .projects-list::-webkit-scrollbar-track {
+            background: #1a1a1a;
+            border-left: 2px solid #a3e635;
+        }
+        .projects-list::-webkit-scrollbar-thumb {
+            background-color: #a3e635;
+            border: 2px solid #101010;
+        }
+        .projects-list::-webkit-scrollbar-thumb:hover {
+            background-color: #d9f99d;
+        }
+
+        /* Dynamic Font Sizing */
+        #hero-title {
+            font-size: clamp(2.25rem, 1.5rem + 3vw, 4.5rem); /* Scales from ~text-4xl to text-7xl */
+        }
+        #hero p {
+             font-size: clamp(1rem, 0.8rem + 0.5vw, 1.25rem); /* Scales from ~text-base to text-xl */
+        }
+        section h2 {
+            font-size: clamp(1.875rem, 1.5rem + 1vw, 2.25rem); /* Scales from ~text-3xl to text-4xl */
+        }
+        #about p, #contact p {
+            font-size: clamp(1rem, 0.9rem + 0.25vw, 1.125rem); /* Scales from ~text-base to text-lg */
+        }
+        .project-card h3 {
+            font-size: clamp(1.25rem, 1.1rem + 0.5vw, 1.5rem); /* Scales from ~text-xl to text-2xl */
+        }
+        .project-card p {
+             font-size: clamp(0.95rem, 0.9rem + 0.2vw, 1rem); /* Scales just below base up to base */
+        }
+    </style>
+</head>
+<body class="antialiased leading-relaxed">
+    <canvas id="matrix-bg"></canvas>
+    
+    <!-- Header -->
+    <header class="fixed top-0 left-0 right-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-3xl font-bold text-lime-300">NR</a>
+            <div class="hidden md:flex space-x-8 items-center">
+                <a href="#about" class="text-lg text-lime-300 hover:text-lime-200 transition-colors">About</a>
+                <a href="#tech" class="text-lg text-lime-300 hover:text-lime-200 transition-colors">Tech</a>
+                <a href="#projects" class="text-lg text-lime-300 hover:text-lime-200 transition-colors">Projects</a>
+                <a href="#contact" class="text-lg text-lime-300 hover:text-lime-200 transition-colors">Contact</a>
+                <a href="mailto:navatejratnanpersonal@gmail.com" class="btn text-lime-300 px-4 py-2">Contact Me</a>
+            </div>
+            <button id="mobile-menu-button" class="md:hidden text-lime-300">
+                <i data-lucide="menu"></i>
+            </button>
+        </nav>
+    </header>
+
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="fixed inset-0 bg-black bg-opacity-95 z-40 hidden flex-col items-center justify-center space-y-8 text-2xl">
+        <a href="#about" class="text-lime-300">About</a>
+        <a href="#tech" class="text-lime-300">Tech</a>
+        <a href="#projects" class="text-lime-300">Projects</a>
+        <a href="#contact" class="text-lime-300">Contact</a>
+        <a href="mailto:navatejratnanpersonal@gmail.com" class="btn text-lime-300 px-6 py-3 mt-4">Contact Me</a>
+    </div>
+
+    <!-- Main Content -->
+    <main class="container mx-auto px-4 sm:px-6 py-12 pt-24 md:pt-32 relative z-10">
+        <!-- Hero Section -->
+        <section id="hero" class="min-h-screen flex items-center justify-center text-center -mt-20">
+            <div class="w-full max-w-6xl pixel-box p-6 sm:p-8 md:p-12 lg:p-16">
+                <h1 id="hero-title" class="font-bold text-lime-300 mb-6 h-24 md:h-28">
+                    <!-- Typing animation will populate this -->
+                </h1>
+                <p class="mb-10 max-w-4xl mx-auto text-lime-400">
+                    Hi, I'm Navatej Ratnan. A full-stack developer crafting beautiful and functional applications for the digital world.
+                </p>
+                <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-4">
+                    <a href="#projects" class="btn text-lime-300 px-6 py-3 text-lg w-full sm:w-auto">View My Work</a>
+                    <a href="#" download class="btn text-lime-300 px-6 py-3 text-lg w-full sm:w-auto">Download CV</a>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Me Section -->
+        <section id="about" class="py-16 md:py-20 scroll-reveal">
+            <div class="pixel-box p-6 md:p-8 lg:p-12">
+                <h2 class="font-bold text-lime-300 mb-8 text-center">About Me</h2>
+                <div class="flex flex-col md:flex-row items-center gap-8 md:gap-12">
+                    <div class="w-48 h-48 md:w-56 md:h-56 lg:w-64 lg:h-64 flex-shrink-0">
+                        <img src="https://iili.io/K5JIYX9.md.jpg" alt="Navatej Ratnan" class="w-full h-full object-cover pixel-box !p-0 !shadow-none">
+                    </div>
+                    <div class="text-lime-400 text-center md:text-left">
+                        <p>
+                            Hello! I'm Navatej, a software developer passionate about building great digital experiences. I'm a full-stack developer with expertise in JavaScript and Next.js. I also build mobile apps with Flutter, explore systems programming with Rust and C++, and leverage Python for AI/ML. From databases (SQL, MongoDB) to deployment (Docker), I enjoy bringing ideas to life with clean, efficient code.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Tech Stack Section -->
+        <section id="tech" class="py-16 md:py-20 scroll-reveal">
+             <div class="pixel-box p-6 md:p-8 lg:p-12">
+                <h2 class="font-bold text-lime-300 mb-8 text-center">Tech Stack</h2>
+                <div id="skills-container" class="flex flex-wrap justify-center gap-3 sm:gap-4">
+                    <button class="skill-filter-btn btn text-lime-300 px-3 py-1 sm:px-4 sm:py-2 active" data-tech="all">All</button>
+                    <button class="skill-filter-btn btn text-lime-300 px-3 py-1 sm:px-4 sm:py-2" data-tech="Python">Python</button>
+                    <button class="skill-filter-btn btn text-lime-300 px-3 py-1 sm:px-4 sm:py-2" data-tech="JavaScript">JavaScript</button>
+                    <button class="skill-filter-btn btn text-lime-300 px-3 py-1 sm:px-4 sm:py-2" data-tech="React">React</button>
+                    <button class="skill-filter-btn btn text-lime-300 px-3 py-1 sm:px-4 sm:py-2" data-tech="Next.js">Next.js</button>
+                    <button class="skill-filter-btn btn text-lime-300 px-3 py-1 sm:px-4 sm:py-2" data-tech="Node.js">Node.js</button>
+                    <button class="skill-filter-btn btn text-lime-300 px-3 py-1 sm:px-4 sm:py-2" data-tech="SQL">SQL</button>
+                    <button class="skill-filter-btn btn text-lime-300 px-3 py-1 sm:px-4 sm:py-2" data-tech="MongoDB">MongoDB</button>
+                    <button class="skill-filter-btn btn text-lime-300 px-3 py-1 sm:px-4 sm:py-2" data-tech="Docker">Docker</button>
+                    <button class="skill-filter-btn btn text-lime-300 px-3 py-1 sm:px-4 sm:py-2" data-tech="Rust">Rust</button>
+                    <button class="skill-filter-btn btn text-lime-300 px-3 py-1 sm:px-4 sm:py-2" data-tech="C++">C++</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Projects Section -->
+        <section id="projects" class="py-16 md:py-20 scroll-reveal">
+            <div class="pixel-box p-6 md:p-8 lg:p-12">
+                <h2 class="font-bold text-lime-300 mb-8 text-center">My Projects</h2>
+                <div class="projects-list space-y-8 max-h-[600px] lg:max-h-[700px] overflow-y-auto pr-4">
+                    <!-- Project 1 -->
+                    <div class="project-card pixel-box !p-0 flex flex-col md:flex-row overflow-hidden" data-tech="Python,React,JavaScript">
+                        <img src="https://placehold.co/600x400/101010/a3e635?text=AI+Sentiment+Analyzer" alt="AI Sentiment Analyzer" class="w-full md:w-1/3 h-48 md:h-auto object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="font-bold text-lime-300 mb-2">AI Sentiment Analyzer</h3>
+                            <p class="text-lime-400 mb-4 flex-grow">A web app that analyzes text sentiment using a custom-trained ML model built with Python and Scikit-learn, served via a Flask API.</p>
+                            <div class="flex items-center space-x-4 mt-auto">
+                                <a href="https://github.com/NavatejR/" target="_blank" class="text-lime-300 hover:text-lime-200"><i data-lucide="github"></i></a>
+                                <a href="#" class="text-lime-300 hover:text-lime-200"><i data-lucide="arrow-up-right-square"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Project 2 -->
+                    <div class="project-card pixel-box !p-0 flex flex-col md:flex-row overflow-hidden" data-tech="Python,JavaScript,SQL">
+                        <img src="https://placehold.co/600x400/101010/a3e635?text=Stock+Dashboard" alt="Stock Dashboard" class="w-full md:w-1/3 h-48 md:h-auto object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="font-bold text-lime-300 mb-2">Real-Time Stock Dashboard</h3>
+                            <p class="text-lime-400 mb-4 flex-grow">A data visualization tool that tracks and displays stock data in real-time, powered by a Python backend using Pandas and a SQL database.</p>
+                            <div class="flex items-center space-x-4 mt-auto">
+                                <a href="https://github.com/NavatejR/" target="_blank" class="text-lime-300 hover:text-lime-200"><i data-lucide="github"></i></a>
+                                <a href="#" class="text-lime-300 hover:text-lime-200"><i data-lucide="arrow-up-right-square"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Project 3 -->
+                    <div class="project-card pixel-box !p-0 flex flex-col md:flex-row overflow-hidden" data-tech="Python,Docker,React,SQL">
+                        <img src="https://placehold.co/600x400/101010/a3e635?text=Recipe+Finder+API" alt="Recipe Finder API" class="w-full md:w-1/3 h-48 md:h-auto object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="font-bold text-lime-300 mb-2">Smart Recipe Finder</h3>
+                            <p class="text-lime-400 mb-4 flex-grow">A full-stack app that suggests recipes based on available ingredients, built with a Django REST backend and deployed with Docker.</p>
+                            <div class="flex items-center space-x-4 mt-auto">
+                                <a href="https://github.com/NavatejR/" target="_blank" class="text-lime-300 hover:text-lime-200"><i data-lucide="github"></i></a>
+                                <a href="#" class="text-lime-300 hover:text-lime-200"><i data-lucide="arrow-up-right-square"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                     <!-- Project 4 -->
+                    <div class="project-card pixel-box !p-0 flex flex-col md:flex-row overflow-hidden" data-tech="Rust,C++">
+                        <img src="https://placehold.co/600x400/101010/a3e635?text=CLI+File+Indexer" alt="CLI File Indexer" class="w-full md:w-1/3 h-48 md:h-auto object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="font-bold text-lime-300 mb-2">Blaze Indexer CLI</h3>
+                            <p class="text-lime-400 mb-4 flex-grow">A high-performance command-line tool built in Rust for recursively indexing and searching large directories of files at lightning speed.</p>
+                            <div class="flex items-center space-x-4 mt-auto">
+                                <a href="https://github.com/NavatejR/" target="_blank" class="text-lime-300 hover:text-lime-200"><i data-lucide="github"></i></a>
+                                <a href="#" class="text-lime-300 hover:text-lime-200"><i data-lucide="arrow-up-right-square"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                     <!-- Project 5 -->
+                    <div class="project-card pixel-box !p-0 flex flex-col md:flex-row overflow-hidden" data-tech="Next.js,MongoDB,JavaScript">
+                        <img src="https://placehold.co/600x400/101010/a3e635?text=Real-time+Chat" alt="Real-time Chat App" class="w-full md:w-1/3 h-48 md:h-auto object-cover">
+                        <div class="p-6 flex flex-col flex-grow">
+                            <h3 class="font-bold text-lime-300 mb-2">Pixel Chat</h3>
+                            <p class="text-lime-400 mb-4 flex-grow">A full-stack, real-time chat application built with Next.js and a MongoDB backend, featuring WebSocket for instant messaging.</p>
+                            <div class="flex items-center space-x-4 mt-auto">
+                                <a href="https://github.com/NavatejR/" target="_blank" class="text-lime-300 hover:text-lime-200"><i data-lucide="github"></i></a>
+                                <a href="#" class="text-lime-300 hover:text-lime-200"><i data-lucide="arrow-up-right-square"></i></a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="py-16 md:py-20 scroll-reveal">
+            <div class="pixel-box p-8 md:p-12 text-center">
+                <h2 class="font-bold text-lime-300 mb-4">Get In Touch</h2>
+                <p class="text-lime-400 max-w-xl mx-auto mb-8">
+                    My inbox is always open. Whether you have a question or just want to say hi, I’ll try my best to get back to you!
+                </p>
+                <a href="mailto:navatejratnanpersonal@gmail.com" class="btn text-lime-300 px-8 py-4 text-xl">
+                    Say Hello
+                </a>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-lime-400 py-8 relative z-10">
+        <div class="container mx-auto px-6 text-center">
+            <div class="pixel-box p-6">
+                <div class="flex justify-center space-x-6 mb-4">
+                    <a href="https://github.com/NavatejR/" target="_blank" class="hover:text-lime-200 transition-colors"><i data-lucide="github"></i></a>
+                    <a href="#" class="hover:text-lime-200 transition-colors"><i data-lucide="twitter"></i></a>
+                    <a href="#" class="hover:text-lime-200 transition-colors"><i data-lucide="linkedin"></i></a>
+                </div>
+                <p>Designed & Built by Navatej Ratnan</p>
+            </div>
+        </div>
+    </footer>
+
+
+    <script>
+        lucide.createIcons();
+
+        // Mobile menu toggle
+        const mobileMenuButton = document.getElementById('mobile-menu-button');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuLinks = mobileMenu.querySelectorAll('a');
+
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        mobileMenuLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Scroll reveal animation
+        const scrollElements = document.querySelectorAll('.scroll-reveal');
+        
+        const elementInView = (el, dividend = 1) => {
+            const elementTop = el.getBoundingClientRect().top;
+            return (
+                elementTop <= (window.innerHeight || document.documentElement.clientHeight) / dividend
+            );
+        };
+
+        const displayScrollElement = (element) => {
+            element.classList.add('visible');
+        };
+
+        const handleScrollAnimation = () => {
+            scrollElements.forEach((el) => {
+                if (elementInView(el, 1.25)) {
+                    displayScrollElement(el);
+                }
+            })
+        }
+
+        window.addEventListener('scroll', handleScrollAnimation);
+        window.addEventListener('load', handleScrollAnimation);
+
+        // Project filtering logic
+        const skillsContainer = document.getElementById('skills-container');
+        const projectCards = document.querySelectorAll('.project-card');
+        const skillFilters = document.querySelectorAll('.skill-filter-btn');
+
+        skillsContainer.addEventListener('click', (e) => {
+            if (e.target.matches('.skill-filter-btn')) {
+                const filter = e.target.dataset.tech;
+                
+                skillFilters.forEach(btn => btn.classList.remove('active'));
+                e.target.classList.add('active');
+
+                projectCards.forEach(card => {
+                    const techStack = card.dataset.tech.split(',');
+                    if (filter === 'all' || techStack.includes(filter)) {
+                        card.classList.remove('hidden');
+                    } else {
+                        card.classList.add('hidden');
+                    }
+                });
+            }
+        });
+
+        // Typing effect for hero title
+        const heroTitle = document.getElementById('hero-title');
+        const titleText = "Crafting Digital Experiences";
+        let charIndex = 0;
+
+        function type() {
+          if (charIndex < titleText.length) {
+            heroTitle.textContent += titleText.charAt(charIndex);
+            charIndex++;
+            setTimeout(type, 100);
+          }
+        }
+        
+        // Matrix Background Animation
+        const canvas = document.getElementById('matrix-bg');
+        const ctx = canvas.getContext('2d');
+
+        let drops = [];
+        const fontSize = 18;
+        let columns = 0;
+        
+        let mouseX = -1000;
+        let mouseY = -1000;
+        const highlightRadius = 120; // Radius for the spotlight effect
+
+        window.addEventListener('mousemove', e => {
+            const rect = canvas.getBoundingClientRect();
+            mouseX = e.clientX - rect.left;
+            mouseY = e.clientY - rect.top;
+        });
+
+        function setupAndReset() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            columns = Math.floor(canvas.width / fontSize);
+            drops = [];
+            for (let x = 0; x < columns; x++) {
+                drops[x] = Math.floor(Math.random() * (canvas.height / fontSize));
+            }
+        }
+
+        const characters = 'アァカサタナハマヤャラワガザダバパイィキシチニヒミリヰギジヂビピウゥクスツヌフムユュルグズブプエェケセテネヘメレヱゲゼデベペオォコソトノホモヨョロヲゴゾドボポヴッン01';
+        
+        function draw() {
+            // Draw the classic "Matrix rain" background
+            ctx.fillStyle = 'rgba(10, 10, 10, 0.05)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            for (let i = 0; i < drops.length; i++) {
+                const text = characters.charAt(Math.floor(Math.random() * characters.length));
+                const charX = i * fontSize;
+                const charY = drops[i] * fontSize;
+
+                const dx = charX - mouseX;
+                const dy = charY - mouseY;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+
+                if (distance < highlightRadius) {
+                    const opacity = 1 - (distance / highlightRadius);
+                    ctx.fillStyle = `rgba(220, 252, 138, ${opacity})`; // lime-200 with falloff
+                    ctx.font = (fontSize + 2) + 'px VT323';
+                    ctx.fillText(text, charX, charY);
+                } else {
+                    ctx.fillStyle = '#a3e635'; // lime-400
+                    ctx.font = fontSize + 'px VT323';
+                    ctx.fillText(text, charX, charY);
+                }
+
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(setupAndReset, 100);
+        });
+
+        // Initialize and start animations
+        setupAndReset();
+        setInterval(draw, 33);
+        setTimeout(type, 500);
+
+    </script>
+</body>
+</html>
+
+
+
